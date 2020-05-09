@@ -17,12 +17,12 @@
 //   "dark": $color-dark
 // ) !default;
 
-$spacers: map-merge (
-  (
-      9: ($spacer * 10)
-  ),
-  $spacers
-)
+// $spacers: map-merge (
+//   (
+//       9: ($spacer * 10)
+//   ),
+//   $spacers
+// )
 
 // Required
 @import "../node_modules/bootstrap/scss/functions";
