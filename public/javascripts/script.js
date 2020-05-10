@@ -1,3 +1,8 @@
+//TODO: API Modeling
+//TODO: Game/Websocket Modeling
+//TODO: Game View
+//TODO: Game Viewmodel
+
 $(function() {
 
     var ws = new WebSocket('ws://localhost:33053');
@@ -22,6 +27,16 @@ $(function() {
             //Enable the textbox again if needed.
             $(this).removeAttr("disabled");
         }
+    });
+
+    $("#createNewGame").click(function() {
+        //Testing
+        $.post({
+            url: "/api/createGame"
+        })
+        .done(function(data) {
+            console.log(data)
+        })
     });
 });
 

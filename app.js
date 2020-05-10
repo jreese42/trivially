@@ -5,7 +5,9 @@ var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 const WebSocket = require('ws');
 
-var wsClients = []
+var TriviaGameWebSocketServer = require('./game/webSocketServer.js')
+
+wss = new TriviaGameWebSocketServer()
 
 var sassMiddleware;
 if (process.env.NODE_ENV !== 'production') {
@@ -21,53 +23,10 @@ if (process.env.NODE_ENV !== 'production') {
 }
 
 var indexRouter = require('./routes/index');
-var sseRouter = require('./routes/serverSentEvent');
+var apiRouter = require('./routes/api');
 
 var app = express();
-const wss = new WebSocket.Server({
-  port: 33053,
-  perMessageDeflate: {
-    zlibDeflateOptions: {
-      // See zlib defaults.
-      chunkSize: 1024,
-      memLevel: 7,
-      level: 3
-    },
-    zlibInflateOptions: {
-      chunkSize: 10 * 1024
-    },
-    // Other options settable:
-    clientNoContextTakeover: true, // Defaults to negotiated value.
-    serverNoContextTakeover: true, // Defaults to negotiated value.
-    serverMaxWindowBits: 10, // Defaults to negotiated value.
-    // Below options specified as default values.
-    concurrencyLimit: 10, // Limits zlib concurrency for perf.
-    threshold: 1024 // Size (in bytes) below which messages
-    // should not be compressed.
-  }
-});
 
-app.set('gameState', {
-  "text": "START"
-})
-
-wss.on('connection', function connection(ws) {
-  // wsClients.push(ws)
-  // console.log(ws)
-  ws.send(app.get('gameState')["text"])
-  console.log(app.get('gameState'))
-  ws.on('message', function incoming(message) {
-    console.log('received: %s', message);
-    app.get('gameState')["text"] = message
-    console.log(app.get('gameState'))
-    wss.clients.forEach(function each(client) {
-      if (client.readyState === WebSocket.OPEN) {
-        client.send(app.get('gameState')["text"]);
-      }
-    })
-  })
-
-});
 
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
@@ -101,7 +60,7 @@ app.use('/css', express.static(__dirname + '/node_modules/animate.css')); // red
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css')); // redirect CSS bootstrap
 
 app.use('/', indexRouter);
-app.use('/sse', sseRouter);
+app.use('/api', apiRouter);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
