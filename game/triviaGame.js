@@ -3,9 +3,16 @@
  * Model of an active game.
  */
 
+var utils = require('./util.js')
+
 class TriviaGame {
     constructor() {
         this.questions = []
+        this._gameId = utils.create_UUID()
+    }
+
+    getGameId() {
+        return this._gameId;
     }
 
     addQuestion(question) {

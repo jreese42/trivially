@@ -4,13 +4,16 @@ block content
   .container
     .row.justify-content-center
       .col-5
-        .container.rounded.border.border-dark.mt-5.px-5.pt-3
+        .container.rounded.border.border-dark.mt-5.px-5.py-3
           .row
-            img.img-fluid(src="images/logo/logo_large.png", alt="Trivially Logo")
+            img.img-fluid(src="/images/logo/logo_large.png", alt="Trivially Logo")
             
           .row
             p#testText
           .row
             input#testInput.form-control(type="text")
-          .row.mt-3.mb-2
+          .row.mt-3
+            p.text-small Input Game Code
+            input#input_gameCode.form-control(type="text", maxlength="4", placeholder="----", value=prefillGameCode)
+          .row.mt-3
             a.text-secondary#createNewGame Create New Game

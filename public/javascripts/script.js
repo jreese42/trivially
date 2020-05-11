@@ -16,13 +16,19 @@ $(function() {
         // ws.send('connected')
     }
 
-    $('#testInput').keypress(function(event){
+    $('#input_gameCode').keypress(function(event){
         var keycode = (event.keyCode ? event.keyCode : event.which);
         if(keycode == '13'){
             //Disable textbox to prevent multiple submit
             $(this).attr("disabled", "disabled");
-            
-            ws.send($(this).val())
+            console.log($(this).val())
+            // ws.send($(this).val())
+            $.post({
+                url: "/api/lookupGame/" + $(this).val()
+            })
+            .done(function(data) {
+                console.log(data)
+            })
     
             //Enable the textbox again if needed.
             $(this).removeAttr("disabled");

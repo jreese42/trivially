@@ -3,3 +3,14 @@
 body {
     background-color: $color-light;
 }
+
+#input_gameCode {
+    height: 4.5rem;
+    font-size: 3.8rem; 
+    font-family: monospace;
+    text-align: center;
+    text-shadow: 0 0 0 $color-dark;
+    color: transparent;
+    text-transform: uppercase;
+    letter-spacing: 0.3rem;
+}

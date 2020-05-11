@@ -1,2 +1,12 @@
 body {
   background-color: #F2EEE7; }
+
+#input_gameCode {
+  height: 4.5rem;
+  font-size: 3.8rem;
+  font-family: monospace;
+  text-align: center;
+  text-shadow: 0 0 0 #1F2226;
+  color: transparent;
+  text-transform: uppercase;
+  letter-spacing: 0.3rem; }

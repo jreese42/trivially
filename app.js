@@ -6,6 +6,7 @@ var logger = require('morgan');
 const WebSocket = require('ws');
 
 var TriviaGameWebSocketServer = require('./game/webSocketServer.js')
+var GameTracker = require('./game/gameTracker.js')
 
 wss = new TriviaGameWebSocketServer()
 
@@ -24,6 +25,8 @@ if (process.env.NODE_ENV !== 'production') {
 
 var indexRouter = require('./routes/index');
 var apiRouter = require('./routes/api');
+var hostRouter = require('./routes/host');
+var playRouter = require('./routes/player');
 
 var app = express();
 
@@ -31,6 +34,8 @@ var app = express();
 // view engine setup
 app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
+
+app.set('component_gameTracker', new GameTracker())
 
 app.use(logger('dev'));
 app.use(express.json());
@@ -59,8 +64,10 @@ app.use('/js', express.static(__dirname + '/node_modules/jquery/dist')); // redi
 app.use('/css', express.static(__dirname + '/node_modules/animate.css')); // redirect CSS animate.css
 app.use('/css', express.static(__dirname + '/node_modules/bootstrap/dist/css')); // redirect CSS bootstrap
 
-app.use('/', indexRouter);
-app.use('/api', apiRouter);
+app.use('/', indexRouter); /** Root website route */
+app.use('/api', apiRouter); /** API Requests */
+app.use('/edit', hostRouter); /** URLs related to editing/hosting */
+app.use('/play', playRouter); /** URLs related to joining/playing */
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {
