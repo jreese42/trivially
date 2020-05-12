@@ -8,12 +8,11 @@ var utils = require('../game/util.js')
 //Dummy api call for testing
 var create_new_triviagame = (req, res) => {
     var gameTracker = req.app.get('component_gameTracker')
-    var gameCode = gameTracker.createNewGame()
-    res.send({"gameCode": gameCode})
+    var gameData = gameTracker.createNewGame()
+    res.send(gameData)
 }
 
 var lookup_triviagame = (req, res) => {
-    console.log("Lookup game", req.params.gameCode)
     /* Input validation */
     var gameCode = req.params.gameCode.toUpperCase()
     if (!utils.gameCodeIsValid(gameCode)) {

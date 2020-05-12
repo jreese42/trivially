@@ -32,8 +32,8 @@ class GameTracker {
         this.gameCodeMap[gameCode] = game
         this.gameCodeExpirationTimes[gameCode] = "TODO"
 
-        console.log("Generated a new TriviaGame with game code", gameCode, "(UUID: ", game.getGameId(), ")")
-        return gameCode
+        console.log("Generated a new TriviaGame with game code", gameCode, "(gameId: ", game.getGameId(), ")")
+        return {"gameCode": gameCode, "gameId": game.getGameId()}
     }
 
     /** Returns a Game object if present, or null if the game code was not valid. */

@@ -9,6 +9,7 @@
  
 var TriviaGame = require('./triviaGame.js')
 var TriviaQuestion = require('./triviaQuestion.js')
+var CommandProcessor = require('./commandProcessor.js')
 
 const WebSocket = require('ws');
 const wssOptions = {
@@ -37,8 +38,10 @@ const wssOptions = {
 class TriviaGameWebSocketServer {
     constructor() {
         this.game = new TriviaGame()
+        this.activeHostClients = []
+        this.activePlayerClients = []
         this.wss = new WebSocket.Server(wssOptions);
-        this.wss.on('connection', this.onNewConnection)
+        this.wss.on('connection', this.onNewConnection.bind(this))
     }
 
     onNewConnection(webSocketClient) {
@@ -46,26 +49,40 @@ class TriviaGameWebSocketServer {
         var connectionType = "host" //TODO
         if (connectionType == "host") {
             webSocketClient.on('message', TriviaGameWebSocketServer.prototype.onMessageFromHost.bind(this))
+            this.activeHostClients.push(webSocketClient)
         }
         else if (connectionType == "player") {
             webSocketClient.on('message', TriviaGameWebSocketServer.prototype.onMessageFromPlayer.bind(this))
-        }
-        // webSocketClient.on('message', function incoming(message) {
-        //     console.log('received: %s', message);
-        //     this.game.addQuestion(new TriviaQuestion(message))
-        //     console.log(this.game.getGameState())
-            // this.wss.clients.forEach(function each(client) {
-            //     if (client.readyState === WebSocket.OPEN) {
-            //     client.send(this.game.getGameState()["question"]);
-            //     }
-            // })
-        // })
-        
+            this.activePlayerClients.push(webSocketClient)
+        }       
         
     }
 
+    sendToHostClients(message) {
+      this.activeHostClients.forEach(client => {
+        if (client.readyState === WebSocket.OPEN) {
+          client.send(message)
+          console.log(message)
+        }
+      })
+    }
+
+    sendToPlayerClients(message) {
+      for (var client in this.activePlayerClients) {
+        client.send(message)
+      }
+    }
+
     onMessageFromHost(message) {
-        console.log("Message from host: " + message)
+      try {
+        var data = JSON.parse(message)
+        var response = CommandProcessor.processHostCommand(data)
+        this.sendToHostClients(response) //TODO: Not all messages should go to all clients
+      }
+      catch (err) {
+        console.error("Error while parsing JSON message from host.", err)
+        return
+      }
     }
 
     onMessageFromPlayer(message) {
