@@ -24,7 +24,7 @@ $(function() {
                     console.log("Couldn't find gameId in response.")
                     return
                 }
-
+                setupWssSocket_playerMode(data.gameId)
             })
     
             //Enable the textbox again if needed.
@@ -69,6 +69,7 @@ function setupWssSocket_hostMode(gameId) {
 //Open socket, send gameId to server to request game state
 function setupWssSocket_playerMode(gameId) {
     openWssSocket()
+    ws.onopen = wssHelper_playerMode_onOpen.bind(this, gameId)
 }
 
 function openWssSocket() {
@@ -80,7 +81,6 @@ function openWssSocket() {
 }
 
 function wssHelper_hostMode_onOpen(gameId) {
-    console.log("Helper", gameId)
     if (ws == null)
         return
 
@@ -88,5 +88,16 @@ function wssHelper_hostMode_onOpen(gameId) {
         "command": "initialize",
         "clientMode": "host",
         "gameId": gameId
-    }))
+    }))    
+}
+
+function wssHelper_playerMode_onOpen(gameId) {
+    if (ws == null)
+        return
+
+    ws.send(JSON.stringify({
+        "command": "initialize",
+        "clientMode": "player",
+        "gameId": gameId
+    }))    
 }

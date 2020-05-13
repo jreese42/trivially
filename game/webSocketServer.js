@@ -9,7 +9,6 @@
  
 var TriviaGame = require('./triviaGame.js')
 var TriviaQuestion = require('./triviaQuestion.js')
-var CommandProcessor = require('./commandProcessor.js')
 
 const WebSocket = require('ws');
 const wssOptions = {
@@ -45,17 +44,8 @@ class TriviaGameWebSocketServer {
     }
 
     onNewConnection(webSocketClient) {
-        /* Determine if this is a host or player */
-        var connectionType = "host" //TODO
-        if (connectionType == "host") {
-            webSocketClient.on('message', TriviaGameWebSocketServer.prototype.onMessageFromHost.bind(this))
-            this.activeHostClients.push(webSocketClient)
-        }
-        else if (connectionType == "player") {
-            webSocketClient.on('message', TriviaGameWebSocketServer.prototype.onMessageFromPlayer.bind(this))
-            this.activePlayerClients.push(webSocketClient)
-        }       
-        
+      /* Bind to a general message processor until we receive the initialization request */
+      webSocketClient.on('message', TriviaGameWebSocketServer.prototype.onMessageFromNewClient.bind(this, webSocketClient))
     }
 
     sendToHostClients(message) {
@@ -73,10 +63,22 @@ class TriviaGameWebSocketServer {
       }
     }
 
-    onMessageFromHost(message) {
+    onMessageFromNewClient(ws, message) {
       try {
         var data = JSON.parse(message)
-        var response = CommandProcessor.processHostCommand(data)
+        var response = this._processInitializationCommand(ws, data)
+        ws.send(response)
+      }
+      catch (err) {
+        console.error("Error while parsing JSON message from client.", err)
+        return
+      }
+    }
+
+    onMessageFromHost(ws, message) {
+      try {
+        var data = JSON.parse(message)
+        var response = this._processHostCommand(data)
         this.sendToHostClients(response) //TODO: Not all messages should go to all clients
       }
       catch (err) {
@@ -85,8 +87,70 @@ class TriviaGameWebSocketServer {
       }
     }
 
-    onMessageFromPlayer(message) {
+    onMessageFromPlayer(ws, message) {
 
+    }
+
+    _addHostClient(ws) {
+      this.activeHostClients.push(ws)
+      ws.on('message', TriviaGameWebSocketServer.prototype.onMessageFromHost.bind(this, ws))    
+      console.log("Added host")  
+    }
+
+    _addPlayerClient(ws) {
+      this.activePlayerClients.push(ws)      
+      ws.on('message', TriviaGameWebSocketServer.prototype.onMessageFromPlayer.bind(this, ws))      
+      console.log("Added player")  
+    }
+
+    _processInitializationCommand(ws, data) {
+      if (!data.command || data.command != "initialize") {
+        console.warn("Received a message from client with no command")
+        return JSON.stringify(_make_error("Missing Command"))
+      }
+      if (!data.clientMode) {
+        console.warn("Bad initialization command from client")
+        return JSON.stringify(_make_error("Missing Parameter"))
+      }
+      if (!data.gameId) {
+        console.warn("Bad initialization command from client")
+        return JSON.stringify(_make_error("Missing Game ID"))
+      }
+
+      switch (data.command) {
+        case "initialize":
+          switch (data.clientMode) {
+            case "host":
+              this._addHostClient(ws)
+              break
+            case "player":
+              this._addPlayerClient(ws)
+              break
+            default:
+              console.warn("Unknown client mode during WebSocket initialization.")
+              return JSON.stringify(_make_error("Unknown Client Mode"))
+          }
+          break
+        default:
+            console.warn("Received unknown command \"" + data.command + "\" from host client.")
+            return JSON.stringify(_make_error("Unknown Command"))
+      }
+      
+    }
+
+    _processHostCommand(data) {
+      throw "NotImplemented"
+    }
+
+    _processPlayerCommand(data) {
+      throw "NotImplemented"
+    }
+
+    static _make_error(text) {
+        return {
+            "success": false,
+            "error": text
+        }
     }
 }
 
