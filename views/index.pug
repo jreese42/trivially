@@ -1,7 +1,10 @@
 extends layout
 
 block content
-  .container
+  nav.navbar
+    a.navbar-brand(href="#")
+      img(src="/images/logo/logo_small.png", width=100)
+  .container#view_entry
     .row.justify-content-center
       .col-5
         .container.rounded.border.border-dark.mt-5.px-5.py-3
@@ -17,3 +20,21 @@ block content
             input#input_gameCode.form-control(type="text", maxlength="4", placeholder="----", value=prefillGameCode)
           .row.mt-3
             a.text-secondary#createNewGame Create New Game
+  .container.collapse#view_host
+    .row.justify-content-center
+      .col-5
+        .container.rounded.border.border-dark.mt-5.px-5.py-3
+          .row
+            img.img-fluid(src="/images/logo/logo_large.png", alt="Trivially Logo")
+            
+          .row
+            p Host Mode
+  .container.collapse#view_player
+    .row.justify-content-center
+      .col-5
+        .container.rounded.border.border-dark.mt-5.px-5.py-3
+          .row
+            img.img-fluid(src="/images/logo/logo_large.png", alt="Trivially Logo")
+            
+          .row
+            p Host Mode

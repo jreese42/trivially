@@ -1,6 +1,9 @@
 body {
   background-color: #F2EEE7; }
 
+.navbar {
+  background-color: #313E4F; }
+
 #input_gameCode {
   height: 4.5rem;
   font-size: 3.8rem;
