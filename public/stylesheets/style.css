@@ -2,7 +2,7 @@ body {
   background-color: #F2EEE7; }
 
 .navbar {
-  background-color: #313E4F; }
+  background-color: #C2BEB9; }
 
 #input_gameCode {
   height: 4.5rem;
@@ -13,3 +13,26 @@ body {
   color: transparent;
   text-transform: uppercase;
   letter-spacing: 0.3rem; }
+
+#view_host #roundSelectorBar {
+  background-color: #313E4F;
+  padding-top: 1rem;
+  padding-bottom: 1rem;
+  padding-left: 3rem; }
+  #view_host #roundSelectorBar a {
+    font-size: 1.2rem;
+    color: #1F2226;
+    text-decoration: none;
+    margin-left: 1rem;
+    margin-right: 1rem; }
+    #view_host #roundSelectorBar a .activeRound {
+      background-color: #313E4F; }
+  #view_host #roundSelectorBar #btn_addRound {
+    padding: 0.4rem; }
+    #view_host #roundSelectorBar #btn_addRound img {
+      width: 1.2rem;
+      height: 1.2rem; }
+
+#view_host .view_hostQuestion .hostQuestion_hamburgerMenu:after {
+  content: '\2807';
+  font-size: 1.6rem; }

@@ -1,11 +1,11 @@
 @import "_global.scss";
 
 body {
-    background-color: $color-light;
+    background-color: $color-neutral-light;
 }
 
 .navbar {
-    background-color: $color-darkblue;
+    background-color: $color-neutral-dark;
 }
 
 #input_gameCode {
@@ -17,4 +17,41 @@ body {
     color: transparent;
     text-transform: uppercase;
     letter-spacing: 0.3rem;
+}
+
+#view_host {
+    #roundSelectorBar {
+        background-color: $color-darkblue;
+        padding-top: 1rem;
+        padding-bottom: 1rem;
+        padding-left: 3rem;
+
+        a {
+            font-size: 1.2rem;
+            color: $color-dark;
+            text-decoration: none;
+            margin-left: 1rem;
+            margin-right: 1rem;
+
+            .activeRound {
+                background-color: $color-darkblue;
+            }
+        }
+
+        #btn_addRound {
+            img {
+                width: 1.2rem;
+                height: 1.2rem;
+            }
+            padding: 0.4rem;
+        }
+    }
+
+    .view_hostQuestion {
+        & .hostQuestion_hamburgerMenu:after {
+            content: '\2807';
+            font-size: 1.6rem;
+            }
+    }
+
 }

@@ -4,7 +4,7 @@ block content
   nav.navbar
     a.navbar-brand(href="#")
       img(src="/images/logo/logo_small.png", width=100)
-  .container#view_entry
+  .container.collapse#view_entry
     .row.justify-content-center
       .col-5
         .container.rounded.border.border-dark.mt-5.px-5.py-3
@@ -20,13 +20,66 @@ block content
             input#input_gameCode.form-control(type="text", maxlength="4", placeholder="----", value=prefillGameCode)
           .row.mt-3
             a.text-secondary#createNewGame Create New Game
-  .container.collapse#view_host
+  .container-fluid#view_host
+    .row#roundSelectorBar
+      a(href="#") Round 1
+      a(href="#").activeRound Round 2
+      a(href="#") Round 3
+      a(href="#")#btn_addRound
+        img(src="/images/ui/icon_add.png")
+
+    .row#roundDetails
+      .col-6.offset-2
+        p Round 1: This or That
+
+    .row.view_hostQuestion.mt-3.align-items-center
+      .col-2
+        x
+      .col-4
+        .row
+          p.text-muted Question 1
+        .row
+          p This is the question text
+        .row
+          span.badge.badge-light.mx-1 Responses: 1/10
+          span.badge.badge-success.mx-1 Visible
+      .col-3
+        button.btn.btn-secondary.btn-sm Hide from Players
+      .col-1
+        .dropright.show
+
+          .hostQuestion_hamburgerMenu#questionEditDropdown(data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+          .dropdown-menu(aria-labelledby="questionEditDropdown")
+            a.dropdown-item(href="#") Edit
+            a.dropdown-item(href="#") Delete
+
+    .row.view_hostQuestion.mt-3.align-items-center
+      .col-2
+        x
+      .col-4
+        .row
+          p.text-muted Question 2
+        .row
+          p This is the question text
+        .row
+          span.badge.badge-light.mx-1 Responses: 1/10
+          span.badge.badge-secondary.mx-1 Hidden
+      .col-3
+        button.btn.btn-success.btn-sm Show to Players
+      .col-1
+        .dropright.show
+
+          .hostQuestion_hamburgerMenu#questionEditDropdown(data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+          .dropdown-menu(aria-labelledby="questionEditDropdown")
+            a.dropdown-item(href="#") Edit
+            a.dropdown-item(href="#") Delete
+
     .row.justify-content-center
       .col-5
         .container.rounded.border.border-dark.mt-5.px-5.py-3
           .row
             img.img-fluid(src="/images/logo/logo_large.png", alt="Trivially Logo")
-            
+
           .row
             p Host Mode
   .container.collapse#view_player
