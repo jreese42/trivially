@@ -4,7 +4,7 @@ block content
   nav.navbar
     a.navbar-brand(href="#")
       img(src="/images/logo/logo_small.png", width=100)
-  .container.collapse#view_entry
+  .container#view_entry
     .row.justify-content-center
       .col-5
         .container.rounded.border.border-dark.mt-5.px-5.py-3
@@ -20,7 +20,7 @@ block content
             input#input_gameCode.form-control(type="text", maxlength="4", placeholder="----", value=prefillGameCode)
           .row.mt-3
             a.text-secondary#createNewGame Create New Game
-  .container-fluid#view_host
+  .container-fluid.collapse#view_host
     .row#roundSelectorBar
       a(href="#") Round 1
       a(href="#").activeRound Round 2
@@ -90,4 +90,4 @@ block content
             img.img-fluid(src="/images/logo/logo_large.png", alt="Trivially Logo")
             
           .row
-            p Host Mode
+            p Player Mode

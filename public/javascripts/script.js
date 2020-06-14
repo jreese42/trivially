@@ -6,8 +6,13 @@
 //The WebSocket is global because it's fundamental to almost everything
 var ws = null
 
-$(function() {
+const UIView = {
+    VIEW_ENTRY: 0,
+    VIEW_HOST: 1,
+    VIEW_PLAYER: 2,
+}
 
+$(function() {
     $('#input_gameCode').keypress(function(event){
         var keycode = (event.keyCode ? event.keyCode : event.which);
         if(keycode == '13'){
@@ -25,6 +30,7 @@ $(function() {
                     return
                 }
                 setupWssSocket_playerMode(data.gameId)
+                switchView(2)
             })
     
             //Enable the textbox again if needed.
@@ -44,6 +50,7 @@ $(function() {
                 return
             }
             setupWssSocket_hostMode(data.gameId)
+            switchView(1)
         })
     });
 });
@@ -70,6 +77,7 @@ function setupWssSocket_hostMode(gameId) {
 function setupWssSocket_playerMode(gameId) {
     openWssSocket()
     ws.onopen = wssHelper_playerMode_onOpen.bind(this, gameId)
+    ws.onmessage = wssHelper_playerMode_onMessage.bind(this)
 }
 
 function openWssSocket() {
@@ -88,7 +96,7 @@ function wssHelper_hostMode_onOpen(gameId) {
         "command": "initialize",
         "clientMode": "host",
         "gameId": gameId
-    }))    
+    }))
 }
 
 function wssHelper_playerMode_onOpen(gameId) {
@@ -100,4 +108,34 @@ function wssHelper_playerMode_onOpen(gameId) {
         "clientMode": "player",
         "gameId": gameId
     }))    
+}
+
+function switchView(newView) {
+    switch (newView) {
+    case 0:
+        $("#view_host").addClass("collapse")
+        $("#view_player").addClass("collapse")
+        $("#view_entry").removeClass("collapse")
+        console.log("Entry View")
+        break
+    case 1:
+        $("#view_entry").addClass("collapse")
+        $("#view_player").addClass("collapse")
+        $("#view_host").removeClass("collapse")
+        console.log("Host View")
+        break
+    case 2:
+        $("#view_entry").addClass("collapse")
+        $("#view_host").addClass("collapse")
+        $("#view_player").removeClass("collapse")
+        console.log("Player View")
+        break
+    default:
+        break
+    }
+}
+
+function wssHelper_playerMode_onMessage(message) {
+    console.log("Player recv Message")
+    console.log(message.data)
 }

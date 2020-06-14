@@ -36,6 +36,7 @@ app.set('views', path.join(__dirname, 'views'));
 app.set('view engine', 'pug');
 
 app.set('component_gameTracker', new GameTracker())
+wss.inject_gameTracker(app.get('component_gameTracker'))
 
 app.use(logger('dev'));
 app.use(express.json());

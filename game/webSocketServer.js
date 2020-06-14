@@ -36,31 +36,18 @@ const wssOptions = {
 
 class TriviaGameWebSocketServer {
     constructor() {
-        this.game = new TriviaGame()
-        this.activeHostClients = []
-        this.activePlayerClients = []
         this.wss = new WebSocket.Server(wssOptions);
         this.wss.on('connection', this.onNewConnection.bind(this))
+        this.gameTracker = null
+    }
+
+    inject_gameTracker(gameTracker) {
+      this.gameTracker = gameTracker
     }
 
     onNewConnection(webSocketClient) {
       /* Bind to a general message processor until we receive the initialization request */
       webSocketClient.on('message', TriviaGameWebSocketServer.prototype.onMessageFromNewClient.bind(this, webSocketClient))
-    }
-
-    sendToHostClients(message) {
-      this.activeHostClients.forEach(client => {
-        if (client.readyState === WebSocket.OPEN) {
-          client.send(message)
-          console.log(message)
-        }
-      })
-    }
-
-    sendToPlayerClients(message) {
-      for (var client in this.activePlayerClients) {
-        client.send(message)
-      }
     }
 
     onMessageFromNewClient(ws, message) {
@@ -75,11 +62,11 @@ class TriviaGameWebSocketServer {
       }
     }
 
-    onMessageFromHost(ws, message) {
+    //Pass this message along to the bound gameObj. gameObj will send responses as needed.
+    onMessageFromHost(ws, gameObj, message) {
       try {
         var data = JSON.parse(message)
-        var response = this._processHostCommand(data)
-        this.sendToHostClients(response) //TODO: Not all messages should go to all clients
+        gameObj._processHostCommand(ws, data)
       }
       catch (err) {
         console.error("Error while parsing JSON message from host.", err)
@@ -87,22 +74,28 @@ class TriviaGameWebSocketServer {
       }
     }
 
-    onMessageFromPlayer(ws, message) {
+    //Pass this message along to the bound gameObj. gameObj will send responses as needed.
+    onMessageFromPlayer(ws, gameObj, message) {
 
     }
 
-    _addHostClient(ws) {
-      this.activeHostClients.push(ws)
-      ws.on('message', TriviaGameWebSocketServer.prototype.onMessageFromHost.bind(this, ws))    
+    //Bind this new Host client to the game object
+    _addHostClient(ws, gameObj) {
+      gameObj.addHostClient(ws)
+      ws.on('message', TriviaGameWebSocketServer.prototype.onMessageFromHost.bind(this, ws, gameObj))    
       console.log("Added host")  
     }
 
-    _addPlayerClient(ws) {
-      this.activePlayerClients.push(ws)      
-      ws.on('message', TriviaGameWebSocketServer.prototype.onMessageFromPlayer.bind(this, ws))      
-      console.log("Added player")  
+    //Bind this new Player client to the game object
+    _addPlayerClient(ws, gameObj) {
+      ws.on('message', TriviaGameWebSocketServer.prototype.onMessageFromPlayer.bind(this, ws, gameObj)) 
+      gameObj.addPlayerClient(ws)
+      gameObj.sendFullGameState(ws)
+      //Syncronize this player with the current game state
+      console.log("Added player")
     }
 
+    //Received an init request from a new client.  Attempt to find a gameObj for this client to bind to.
     _processInitializationCommand(ws, data) {
       if (!data.command || data.command != "initialize") {
         console.warn("Received a message from client with no command")
@@ -119,12 +112,17 @@ class TriviaGameWebSocketServer {
 
       switch (data.command) {
         case "initialize":
+          if (!this.gameTracker) {
+            console.error("Received Initialization command but gameTracker wasn't ready!")
+            return
+          }
+          var gameObj = this.gameTracker.lookupByGameId(data.gameId)
           switch (data.clientMode) {
             case "host":
-              this._addHostClient(ws)
+              this._addHostClient(ws, gameObj)
               break
             case "player":
-              this._addPlayerClient(ws)
+              this._addPlayerClient(ws, gameObj)
               break
             default:
               console.warn("Unknown client mode during WebSocket initialization.")
@@ -136,14 +134,6 @@ class TriviaGameWebSocketServer {
             return JSON.stringify(_make_error("Unknown Command"))
       }
       
-    }
-
-    _processHostCommand(data) {
-      throw "NotImplemented"
-    }
-
-    _processPlayerCommand(data) {
-      throw "NotImplemented"
     }
 
     static _make_error(text) {

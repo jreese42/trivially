@@ -3,12 +3,16 @@
  * Model of an active game.
  */
 
-var utils = require('./util.js')
+var utils = require('./util.js');
+const TriviaQuestion = require('./triviaQuestion.js');
 
 class TriviaGame {
     constructor() {
         this.questions = []
         this._gameId = utils.create_UUID()
+
+        this.activeHostClients = []
+        this.activePlayerClients = []
     }
 
     getGameId() {
@@ -20,14 +24,54 @@ class TriviaGame {
     }
 
     getGameState() {
-        var question = ""
-        if (this.questions.length > 0)
-            question = this.questions[this.questions.length - 1].questionText
-        console.log(question)
         var gameState = {
-            "question": question
+            "questions": []
         }
+        this.questions.for
+        this.questions.forEach(question => {
+            gameState.questions.push(question.questionText)
+        })
         return gameState
+    }
+
+    /* WebSocket Management Functions */
+    /* Hosts and Clients are directly attached to this object */
+    /* Data from the WSS is routed here, and this object is expected to forumulate responses. */
+    addHostClient(wsClient) {
+        this.activeHostClients.push(wsClient)
+    }
+
+    addPlayerClient(wsClient) {
+        this.activePlayerClients.push(wsClient)
+    }
+
+    sendFullGameState(wsClient) {
+        console.log(this.getGameState())
+        console.log(JSON.stringify(this.getGameState()))
+        wsClient.send(JSON.stringify(this.getGameState()))
+    }
+    
+    _sendToHostClients(message) {
+        this.activeHostClients.forEach(client => {
+          if (client.readyState === WebSocket.OPEN) {
+            client.send(message)
+            console.log(message)
+          }
+        })
+    }
+  
+    _sendToPlayerClients(message) {
+        for (var client in this.activePlayerClients) {
+          client.send(message)
+        }
+    }
+
+    _processHostCommand(wsClient, data) {
+
+    }
+
+    _processPlayerCommand(wsClient, data) {
+
     }
 }
 

@@ -8,11 +8,16 @@
 
 var TriviaGame = require('./triviaGame.js')
 var utils = require('./util.js')
+const TriviaQuestion = require('./triviaQuestion.js')
+
+var testGame = new TriviaGame()
+testGame.addQuestion(new TriviaQuestion("Test Question 1"))
+testGame.addQuestion(new TriviaQuestion("Test Question 2"))
 
 class GameTracker {
     constructor() {
         /* For now, a map of game sessions. Later, change to map gameCode => uuid for db lookup */
-        this.gameCodeMap = {} 
+        this.gameCodeMap = {"AAAA": testGame} 
         this.gameCodeExpirationTimes = {}
     }
 
@@ -42,6 +47,19 @@ class GameTracker {
             return null
         if (gameCode in this.gameCodeMap) {
             return this.gameCodeMap[gameCode]
+        }
+        return null
+    }
+
+    /** Returns a Game object if present, or null if the game id was not valid. */
+    lookupByGameId(gameId) {
+        for (const game in this.gameCodeMap) {
+            if (this.gameCodeMap.hasOwnProperty(game)) {
+                const foundGameId = this.gameCodeMap[game].getGameId();
+                console.log(this.gameCodeMap[game])
+                if (gameId == foundGameId)
+                    return this.gameCodeMap[game]
+            }
         }
         return null
     }
