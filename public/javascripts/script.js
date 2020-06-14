@@ -30,7 +30,7 @@ $(function() {
                     return
                 }
                 setupWssSocket_playerMode(data.gameId)
-                switchView(2)
+                switchView(2) //TODO: Fix magic number. This is Player Mode.
             })
     
             //Enable the textbox again if needed.
@@ -50,7 +50,7 @@ $(function() {
                 return
             }
             setupWssSocket_hostMode(data.gameId)
-            switchView(1)
+            switchView(1) //TODO: Fix magic number. This is Host Mode.
         })
     });
 });
@@ -67,7 +67,7 @@ const animateCSS = (element, animation, prefix = 'animate__') =>
   });
 
 //Open socket, send gameId to server to request game data
-//TODO: Some security around this (player accounts would help too)
+//TODO: Some security around this (player accounts would help to verify game ownership)
 function setupWssSocket_hostMode(gameId) {
     openWssSocket()
     ws.onopen = wssHelper_hostMode_onOpen.bind(this, gameId)
@@ -137,5 +137,31 @@ function switchView(newView) {
 
 function wssHelper_playerMode_onMessage(message) {
     console.log("Player recv Message")
-    console.log(message.data)
+    var json = null
+    try {
+        json = JSON.parse(message.data)
+    } catch {
+        return
+    }
+    if (json == null)
+        return
+    console.log(json)
+    //TODO: Handle adding questions in the middle, removing questions, adding question to end
+    //TODO: Make this a viewmodel/view
+    if (json.questions) {
+        for (let index = 0; index < json.questions.length; index++) {
+            const question = json.questions[index];
+            $("#questionsContainer").append(renderView_player_question(question))
+        }
+    }
+}
+
+class GameHostViewModel {
+    constructor() {
+
+    }
+
+    addNewQuestion(questionText) {
+
+    }
 }

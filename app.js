@@ -3,6 +3,8 @@ var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
+var fs = require('fs');
+var pug = require('pug');
 const WebSocket = require('ws');
 
 var TriviaGameWebSocketServer = require('./game/webSocketServer.js')
@@ -69,6 +71,11 @@ app.use('/', indexRouter); /** Root website route */
 app.use('/api', apiRouter); /** API Requests */
 app.use('/edit', hostRouter); /** URLs related to editing/hosting */
 app.use('/play', playRouter); /** URLs related to joining/playing */
+
+/* Compile client side pug into templates.js */
+var jsFunctionString
+jsFunctionString = pug.compileFileClient('views/client/player_question.pug', {name: "renderView_player_question"});
+fs.writeFileSync("public/javascripts/templates.js", jsFunctionString);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

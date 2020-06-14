@@ -27,9 +27,12 @@ class TriviaGame {
         var gameState = {
             "questions": []
         }
-        this.questions.for
+        var questionNum = 1
         this.questions.forEach(question => {
-            gameState.questions.push(question.questionText)
+            gameState.questions.push({
+                "questionNum": questionNum++,
+                "questionText": question.questionText,
+            })
         })
         return gameState
     }

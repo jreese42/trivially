@@ -1,0 +1,11 @@
+//Incoming variables: questionText = text of the question, questionNum = number within round
+
+.container.my-2
+    p Question #{questionNum}
+    h5= questionText
+    .container
+        .row
+            .col-8.mr-2
+                input.form-control(type="text", maxlength="256", placeholder="Answer")
+            .col-3
+                button.btn.btn-secondary(type="button", data-questionnum=questionNum) Submit Answer
