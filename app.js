@@ -76,6 +76,10 @@ app.use('/play', playRouter); /** URLs related to joining/playing */
 var jsFunctionString
 jsFunctionString = pug.compileFileClient('views/client/player_question.pug', {name: "renderView_player_question"});
 fs.writeFileSync("public/javascripts/templates.js", jsFunctionString);
+jsFunctionString = pug.compileFileClient('views/client/host_question.pug', {name: "renderView_host_question"});
+fs.writeFileSync("public/javascripts/templates.js", jsFunctionString);
+jsFunctionString = pug.compileFileClient('views/client/host_question_editable.pug', {name: "renderView_host_questionEditable"});
+fs.writeFileSync("public/javascripts/templates.js", jsFunctionString);
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

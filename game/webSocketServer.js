@@ -81,16 +81,19 @@ class TriviaGameWebSocketServer {
 
     //Bind this new Host client to the game object
     _addHostClient(ws, gameObj) {
-      gameObj.addHostClient(ws)
+      ws.removeAllListeners()
       ws.on('message', TriviaGameWebSocketServer.prototype.onMessageFromHost.bind(this, ws, gameObj))    
+      gameObj.addHostClient(ws)
+      gameObj.sendHostGameState(ws)
       console.log("Added host")  
     }
 
     //Bind this new Player client to the game object
     _addPlayerClient(ws, gameObj) {
+      ws.removeAllListeners()
       ws.on('message', TriviaGameWebSocketServer.prototype.onMessageFromPlayer.bind(this, ws, gameObj)) 
       gameObj.addPlayerClient(ws)
-      gameObj.sendFullGameState(ws)
+      gameObj.sendPlayerGameState(ws)
       //Syncronize this player with the current game state
       console.log("Added player")
     }

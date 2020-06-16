@@ -1,0 +1,17 @@
+//Incoming variables: questionText = text of the question, questionNum = number within round
+
+.container
+    .row.view_hostQuestion.mt-3.align-items-center
+        .col-2
+            x
+        .col-4
+            .row
+                p.text-muted Question #{questionNum}
+            .row.my-1
+                input.form-control(type='text', value=questionText)
+            .row.my-1
+                input.form-control(type='text', placeholder="Enter answer for automatic checking. Optional.")
+
+    .row.align-items-right
+        .col-2.offset-9
+            button.btn.btn-primary Save

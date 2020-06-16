@@ -1,0 +1,24 @@
+//Incoming variables: questionText = text of the question, questionNum = number within round
+
+.container
+    .row.view_hostQuestion.mt-3.align-items-center
+        .col-2
+            x
+        .col-4
+            .row
+            p.text-muted Question #{questionNum}
+            .row
+            p= questionText
+            .row
+            span.badge.badge-light.mx-1 Responses: 1/10
+            span.badge.badge-success.mx-1 Visible
+            span.badge.badge-muted.mx-1.hidden Hidden
+
+        .col-3
+            button.btn.btn-secondary.btn-sm Hide from Players
+        .col-1
+            .dropright.show
+            .hostQuestion_hamburgerMenu#questionEditDropdown(data-toggle="dropdown", aria-haspopup="true", aria-expanded="false")
+            .dropdown-menu(aria-labelledby="questionEditDropdown")
+                a.dropdown-item(href="#") Edit
+                a.dropdown-item(href="#") Delete

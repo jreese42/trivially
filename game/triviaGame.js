@@ -23,7 +23,7 @@ class TriviaGame {
         this.questions.push(question)
     }
 
-    getGameState() {
+    getPlayerGameState() {
         var gameState = {
             "questions": []
         }
@@ -32,6 +32,21 @@ class TriviaGame {
             gameState.questions.push({
                 "questionNum": questionNum++,
                 "questionText": question.questionText,
+            })
+        })
+        return gameState
+    }
+
+    getHostGameState() {
+        var gameState = {
+            "questions": []
+        }
+        var questionNum = 1
+        this.questions.forEach(question => {
+            gameState.questions.push({
+                "questionNum": questionNum++,
+                "questionText": question.questionText,
+                "questionAnswer": question.answer
             })
         })
         return gameState
@@ -48,10 +63,14 @@ class TriviaGame {
         this.activePlayerClients.push(wsClient)
     }
 
-    sendFullGameState(wsClient) {
+    sendPlayerGameState(wsClient) {
         console.log(this.getGameState())
-        console.log(JSON.stringify(this.getGameState()))
-        wsClient.send(JSON.stringify(this.getGameState()))
+        console.log(JSON.stringify(this.getPlayerGameState()))
+        wsClient.send(JSON.stringify(this.getPlayerGameState()))
+    }
+
+    sendHostGameState(wsClient) {
+        wsClient.send(JSON.stringify(this.getHostGameState()))
     }
     
     _sendToHostClients(message) {
@@ -70,7 +89,18 @@ class TriviaGame {
     }
 
     _processHostCommand(wsClient, data) {
-
+        if (!data.command)
+            return
+        switch (data.command) {
+            case "addQuestion":
+                console.log("Add Q")
+                this.questions.push(new TriviaQuestion("New Question"))
+                this.sendHostGameState(wsClient)
+                break
+            case "deleteQuestion":
+                console.log("Remove Q")
+                break
+        }
     }
 
     _processPlayerCommand(wsClient, data) {
